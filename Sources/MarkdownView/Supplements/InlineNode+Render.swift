@@ -48,11 +48,11 @@ extension MarkdownInlineNode {
         case let .emphasis(children):
             let ans = NSMutableAttributedString()
             children.map { $0.render(theme: theme, context: context, viewProvider: viewProvider) }.forEach { ans.append($0) }
+            // DS4 patch: render markdown emphasis as an italic font (the conventional look) instead
+            // of a thick underline in the emphasis accent color, which with no `AccentColor` asset
+            // fell back to systemOrange — a whole italic paragraph became an orange underline.
             ans.addAttributes(
-                [
-                    .underlineStyle: NSUnderlineStyle.thick.rawValue,
-                    .underlineColor: theme.colors.emphasis,
-                ],
+                [.font: theme.fonts.italic],
                 range: NSRange(location: 0, length: ans.length)
             )
             return ans

@@ -100,8 +100,14 @@ final class BlockProcessor {
         codeView.content = content
         let drawer = codeDrawing!
         let text = buildWithParagraphSync { paragraph in
-            let height = CodeView.intrinsicHeight(for: content, theme: theme)
-            paragraph.minimumLineHeight = height
+            // DS4 patch: reserve the code view's ACTUAL rendered height (theme + content are already
+            // set above, so `intrinsicContentSize` is valid here), not the static line-count estimate
+            // `CodeView.intrinsicHeight`. The estimate can be shorter than what the view renders, so
+            // the code block overran its reserved line and the following text drew on top of it.
+            // `paragraphSpacing` adds a margin beneath the block.
+            let height = codeView.intrinsicContentSize.height
+            paragraph.minimumLineHeight = ceil(height)
+            paragraph.paragraphSpacing = theme.spacings.general
         } content: {
             .init(string: LTXReplacementText, attributes: [
                 .font: theme.fonts.body,
