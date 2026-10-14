@@ -279,7 +279,10 @@ import Litext
         private lazy var scrollView: NSScrollView = {
             let sv = NSScrollView()
             sv.hasVerticalScroller = false
-            sv.hasHorizontalScroller = false
+            // DS4: a table wider than its column scrolls sideways; show an
+            // auto-hiding scroller so it doesn't read as clipped.
+            sv.hasHorizontalScroller = true
+            sv.autohidesScrollers = true
             sv.drawsBackground = false
             return sv
         }()
